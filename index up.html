@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Z3TR Entry — Minimal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #0b0c0f;
+      --panel: rgba(255,255,255,0.03);
+      --muted: #9aa0a6;
+      --lime: #32CD32;
+      --glass: rgba(255,255,255,0.04);
+      --radius: 14px;
+      --focus-color: #7fff00;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: 'Share Tech Mono', monospace;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(50,205,50,0.04), transparent), var(--bg);
+      color:#ddd;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px;
+    }
+    .card{
+      width:100%;
+      max-width:880px;
+      background:linear-gradient(180deg,var(--panel),transparent);
+      border-radius:var(--radius);
+      padding:36px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.04);
+    }
+    header{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      margin-bottom:18px;
+    }
+    h1{
+      margin:0;
+      color:var(--lime);
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing:2px;
+      font-size: clamp(20px, 4.2vw, 36px);
+      text-transform:uppercase;
+    }
+    p.lead{
+      color:#ccc;
+      line-height:1.5;
+      margin:14px 0 20px 0;
+      font-size:16px;
+    }
+    .hint{font-size:0.85rem;color:var(--muted);}
+    /* allegiance buttons */
+    .choices{
+      display:flex;
+      gap:12px;
+      margin-top:18px;
+      flex-wrap:wrap;
+    }
+    .choice{
+      appearance:none;
+      border:0;
+      padding:14px 22px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+      min-width:110px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.5);
+      transition:transform .12s ease, box-shadow .12s ease, outline-color .12s ease;
+      outline-offset: 2px;
+      outline: 2px solid transparent;
+    }
+    .choice:active{transform:translateY(1px)}
+    .choice.red{background:linear-gradient(180deg,#6b0f0f,#9f1a1a); color:#fff}
+    .choice.blue{background:linear-gradient(180deg,#0f3b6b,#1a6aa0); color:#fff}
+    .choice.purple{background:linear-gradient(180deg,#3b0f6b,#6a1a9f); color:#fff}
+
+    .choice[aria-checked="true"] {
+      outline-color: var(--focus-color);
+      box-shadow: 0 0 12px var(--focus-color);
+      transform: translateY(-1px);
+    }
+    .choice:focus-visible {
+      outline-color: var(--focus-color);
+      box-shadow: 0 0 8px var(--focus-color);
+    }
+
+    .meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:20px}
+    .meta .countdown{font-family: 'Orbitron', sans-serif; color:var(--lime); font-size:0.95rem}
+    /* subtle glass input area */
+    form{background:var(--glass); padding:14px; border-radius:10px; display:flex; gap:10px; align-items:center}
+    input[type=text]{
+      flex:1;
+      border:0;
+      background:transparent;
+      color:#ddd;
+      padding:8px 10px;
+      font-size:0.95rem;
+      outline:none;
+      caret-color: var(--lime);
+    }
+    input[type=text]:focus-visible {
+      outline: 2px solid var(--focus-color);
+      outline-offset: 2px;
+    }
+    .cta{
+      padding:10px 14px;
+      border-radius:10px;
+      background:linear-gradient(180deg,#111, #222);
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,0.04);
+      cursor:pointer;
+      font-weight: 700;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .cta:focus-visible {
+      outline: 2px solid var(--focus-color);
+      outline-offset: 2px;
+      color: var(--lime);
+      background-color: #111a00;
+    }
+    .cta:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+    /* small responsive tweaks */
+    @media (max-width:520px){
+      .choices{flex-direction:column}
+      header{gap:12px}
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-labelledby="title">
+    <header>
+      <h1 id="title">WELCOME, AGENT.</h1>
+    </header>
+    <p class="lead" id="lead">
+      You’ve breached Z3TR’s hidden domain. The mission begins now.<br>
+      Choose your allegiance—<strong>RED</strong>, <strong>BLUE</strong>, or <strong>PURPLE</strong>—and submit your selection below.<br>
+      Next clue stuns in <strong>Episode 1</strong>. Stay vigilant.
+    </p>
+    <!-- interactive form -->
+    <form id="allegianceForm" onsubmit="event.preventDefault(); submitAllegiance();" aria-label="Select your allegiance" novalidate>
+      <input type="text" id="codename" name="codename" placeholder="Agent codename (optional)" aria-label="Agent codename">
+      <button type="submit" class="cta" id="submitBtn">Submit Selection</button>
+    </form>
+    <div class="choices" role="radiogroup" aria-label="Allegiance choices" tabindex="0">
+      <button class="choice red" data-value="RED" role="radio" aria-checked="false" tabindex="-1">RED</button>
+      <button class="choice blue" data-value="BLUE" role="radio" aria-checked="false" tabindex="-1">BLUE</button>
+      <button class="choice purple" data-value="PURPLE" role="radio" aria-checked="false" tabindex="-1">PURPLE</button>
+    </div>
+    <div class="meta">
+      <div class="hint">Hint: Look closely next episode for the signature pattern.</div>
+      <div class="countdown" id="countdown">Episode 1 • available soon</div>
+    </div>
+  </main>
+  <script>
+    const choices = document.querySelectorAll('.choice');
+    let selected = null;
+
+    function updateSelection(newSelectedBtn) {
+      choices.forEach(btn => {
+        btn.setAttribute('aria-checked', btn === newSelectedBtn ? 'true' : 'false');
+        btn.tabIndex = btn === newSelectedBtn ? 0 : -1;
+      });
+      selected = newSelectedBtn ? newSelectedBtn.getAttribute('data-value') : null;
+      if(newSelectedBtn) {
+        newSelectedBtn.focus();
+      }
+    }
+
+    choices.forEach(btn => {
+      btn.addEventListener('click', () => {
+        updateSelection(btn);
+      });
+      btn.addEventListener('keydown', e => {
+        const currentIndex = Array.from(choices).indexOf(btn);
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          const nextIndex = (currentIndex + 1) % choices.length;
+          updateSelection(choices[nextIndex]);
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prevIndex = (currentIndex - 1 + choices.length) % choices.length;
+          updateSelection(choices[prevIndex]);
+        } else if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          updateSelection(btn);
+        }
+      });
+    });
+
+    // Initialize selection to none
+    updateSelection(null);
+
+    function submitAllegiance(){
+      const name = document.getElementById('codename').value.trim() || 'Anonymous';
+      if(!selected){
+        alert('Select an allegiance: RED, BLUE, or PURPLE.');
+        return;
+      }
+      // simulate submission — replace with your endpoint
+      console.log('Submitted:', {codename:name, allegiance:selected});
+      const btn = document.getElementById('submitBtn');
+      btn.textContent = 'Submitted ?';
+      btn.disabled = true;
+      setTimeout(()=>{
+        btn.textContent = 'Submit Selection';
+        btn.disabled = false;
+      }, 2200);
+    }
+
+    // small readable "soon" -> real date display if you want
+    (function updateCountdown(){
+      // Example: set Episode 1 release date here (YYYY, M-1, D)
+      const release = null; // e.g. new Date(2025,7,20);
+      const el = document.getElementById('countdown');
+      if(release){
+        const diff = release - new Date();
+        if(diff<=0) el.textContent = 'Episode 1 • now live';
+        else{
+          const days = Math.floor(diff/86400000);
+          el.textContent = `Episode 1 • in ${days} day${days!==1?'s':''}`;
+        }
+      } else {
+        el.textContent = 'Episode 1 • available soon';
+      }
+    })();
+
+    // Optional: keyboard shortcuts R,B,P for quick selection
+    window.addEventListener('keydown', e=>{
+      if(document.activeElement.tagName === 'INPUT') return; // ignore if typing
+      const key = e.key.toLowerCase();
+      const map = {r:'RED', b:'BLUE', p:'PURPLE'};
+      if(key in map){
+        e.preventDefault();
+        const val = map[key];
+        const btn = Array.from(choices).find(b=>b.getAttribute('data-value') === val);
+        if(btn) updateSelection(btn);
+      }
+    });
+  </script>
+  <!-- Invisible YouTube Background Audio -->
+  <iframe
+    id="bg-music"
+    width="0" height="0"
+    style="position: absolute; top: 0; left: 0; z-index: -1;"
+    src="https://www.youtube.com/embed/pFS4zYWxzNA?autoplay=1&loop=1&playlist=pFS4zYWxzNA&controls=0&mute=1&modestbranding=1&rel=0&showinfo=0"
+    frameborder="0"
+    allow="autoplay; encrypted-media"
+    allowfullscreen
+    aria-hidden="true"
+    tabindex="-1"
+  ></iframe>
+</body>
+</html>
