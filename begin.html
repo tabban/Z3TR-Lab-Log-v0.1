@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Z3TR Entry — Minimal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #0b0c0f;
+      --panel: rgba(255,255,255,0.03);
+      --muted: #9aa0a6;
+      --lime: #32CD32;
+      --glass: rgba(255,255,255,0.04);
+      --radius: 14px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: 'Share Tech Mono', monospace;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(50,205,50,0.04), transparent), var(--bg);
+      color:#ddd;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px;
+    }
+    .card{
+      width:100%;
+      max-width:880px;
+      background:linear-gradient(180deg,var(--panel),transparent);
+      border-radius:var(--radius);
+      padding:36px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.04);
+    }
+    header{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      margin-bottom:18px;
+    }
+    h1{
+      margin:0;
+      color:var(--lime);
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing:2px;
+      font-size: clamp(20px, 4.2vw, 36px);
+      text-transform:uppercase;
+    }
+    p.lead{
+      color:#ccc;
+      line-height:1.5;
+      margin:14px 0 20px 0;
+      font-size:16px;
+    }
+    .hint{font-size:0.85rem;color:var(--muted);}
+
+    /* allegiance buttons */
+    .choices{
+      display:flex;
+      gap:12px;
+      margin-top:18px;
+      flex-wrap:wrap;
+    }
+    .choice{
+      appearance:none;
+      border:0;
+      padding:14px 22px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+      min-width:110px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.5);
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .choice:active{transform:translateY(1px)}
+    .choice.red{background:linear-gradient(180deg,#6b0f0f,#9f1a1a); color:#fff}
+    .choice.blue{background:linear-gradient(180deg,#0f3b6b,#1a6aa0); color:#fff}
+    .choice.purple{background:linear-gradient(180deg,#3b0f6b,#6a1a9f); color:#fff}
+
+    .meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:20px}
+    .meta .countdown{font-family: 'Orbitron', sans-serif; color:var(--lime); font-size:0.95rem}
+
+    /* subtle glass input area */
+    form{background:var(--glass); padding:14px; border-radius:10px; display:flex; gap:10px; align-items:center}
+    input[type=text]{flex:1; border:0; background:transparent; color:#ddd; padding:8px 10px; font-size:0.95rem; outline:none}
+    .cta{padding:10px 14px; border-radius:10px; background:linear-gradient(180deg,#111, #222); color:var(--muted); border:1px solid rgba(255,255,255,0.04); cursor:pointer}
+
+    /* small responsive tweaks */
+    @media (max-width:520px){
+      .choices{flex-direction:column}
+      header{gap:12px}
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-labelledby="title">
+    <header>
+      <h1 id="title">WELCOME, AGENT.</h1>
+    </header>
+
+    <p class="lead" id="lead">
+      You’ve breached Z3TR’s hidden domain. The mission begins now.<br>
+      Choose your allegiance—<strong>RED</strong>, <strong>BLUE</strong>, or <strong>PURPLE</strong>—and submit your selection below.<br>
+      Next clue stuns in <strong>Episode 1</strong>. Stay vigilant.
+    </p>
+
+    <!-- interactive form -->
+    <form id="allegianceForm" onsubmit="event.preventDefault(); submitAllegiance();" aria-label="Select your allegiance">
+      <input type="text" id="codename" name="codename" placeholder="Agent codename (optional)" aria-label="Agent codename">
+      <button type="submit" class="cta" id="submitBtn">Submit Selection</button>
+    </form>
+
+    <div class="choices" role="radiogroup" aria-label="Allegiance choices">
+      <button class="choice red" data-value="RED" onclick="pick(this)">RED</button>
+      <button class="choice blue" data-value="BLUE" onclick="pick(this)">BLUE</button>
+      <button class="choice purple" data-value="PURPLE" onclick="pick(this)">PURPLE</button>
+    </div>
+
+    <div class="meta">
+      <div class="hint">Hint: Look closely next episode for the signature pattern.</div>
+      <div class="countdown" id="countdown">Episode 1 • available soon</div>
+    </div>
+
+  </main>
+
+  <script>
+    let selected = null;
+    function pick(btn){
+      document.querySelectorAll('.choice').forEach(b=>b.style.outline='');
+      btn.style.outline = '3px solid rgba(255,255,255,0.06)';
+      selected = btn.getAttribute('data-value');
+    }
+    function submitAllegiance(){
+      const name = document.getElementById('codename').value || 'Anonymous';
+      if(!selected){
+        alert('Select an allegiance: RED, BLUE, or PURPLE.');
+        return;
+      }
+      // simulate submission — replace with your endpoint
+      console.log('Submitted:', {codename:name, allegiance:selected});
+      const btn = document.getElementById('submitBtn');
+      btn.textContent = 'Submitted ✓';
+      btn.disabled = true;
+      setTimeout(()=>{
+        btn.textContent = 'Submit Selection';
+        btn.disabled = false;
+      }, 2200);
+    }
+
+    // small readable "soon" -> real date display if you want
+    (function updateCountdown(){
+      // Example: set Episode 1 release date here (YYYY, M-1, D)
+      const release = null; // e.g. new Date(2025,7,20);
+      const el = document.getElementById('countdown');
+      if(release){
+        const diff = release - new Date();
+        if(diff<=0) el.textContent = 'Episode 1 • now live';
+        else{
+          const days = Math.floor(diff/86400000);
+          el.textContent = `Episode 1 • in ${days} day${days!==1?'s':''}`;
+        }
+      } else {
+        el.textContent = 'Episode 1 • available soon';
+      }
+    })();
+
+    // Export simple SVG image of the card for embedding as a static image
+    function downloadSVG(){
+      const svg = `<?xml version="1.0" encoding="utf-8"?>\n` +
+      `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='600'>`+
+      `<rect width='100%' height='100%' fill='#0b0c0f'/>`+
+      `<text x='60' y='140' fill='${getComputedStyle(document.documentElement).getPropertyValue('--lime') || '#32CD32'}' font-family='Orbitron, sans-serif' font-size='48'>WELCOME, AGENT.</text>`+
+      `<text x='60' y='220' fill='#ccc' font-family='Share Tech Mono, monospace' font-size='18'>You’ve breached Z3TR’s hidden domain. The mission begins now. Choose your allegiance — RED, BLUE, or PURPLE — and submit your selection below.</text>`+
+      `</svg>`;
+      const blob = new Blob([svg], {type:'image/svg+xml'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'Z3TR_entry.svg'; document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    // Optional: keyboard shortcuts R,B,P
+    window.addEventListener('keydown', e=>{
+      if(['r','b','p'].includes(e.key.toLowerCase())){
+        const map = {r:'RED', b:'BLUE', p:'PURPLE'};
+        selected = map[e.key.toLowerCase()];
+        document.querySelectorAll('.choice').forEach(b=>b.style.outline='');
+        document.querySelector(`[data-value='${selected}']`).style.outline = '3px solid rgba(255,255,255,0.06)';
+      }
+    });
+  </script>
+</body>
+</html>
